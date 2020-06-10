@@ -4,8 +4,80 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: url('https://content.pouet.net/styles/001/gfx/trumpet.png');
+      }
+
+      #graph {
+        padding: 30px;
+        border: 1px solid black;
+        box-shadow: 0 0 10px 5px rgba(0, 0, 0, 0.2);
+        background: white;
+        color: black;
+      }
+    </style>
   </head>
   <body>
-    hi there
+    <canvas id="graph" width="800" height="600"></canvas>
   </body>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const canvas = document.querySelector('#graph');
+    const ctx = canvas.getContext('2d');
+
+    const horizontalCenter = canvas.width / 2 - 0.5;
+    const verticalCenter = canvas.height / 2 - 0.5;
+
+    ctx.font = '14px Arial';
+
+    drawAxis();
+
+    // functions
+    function drawAxis() {
+      const arrowSize = 5;
+      ctx.lineWidth = 1;
+
+      // ordinate
+      ctx.moveTo(0, verticalCenter);
+      ctx.lineTo(canvas.width, verticalCenter);
+      ctx.stroke();
+
+      // ordinate arrow
+      ctx.beginPath();
+      ctx.moveTo(canvas.width, verticalCenter);
+      ctx.lineTo(canvas.width - arrowSize - 0.5, verticalCenter - arrowSize - 0.5);
+      ctx.lineTo(canvas.width - arrowSize - 0.5, verticalCenter + arrowSize + 0.5);
+      ctx.fill();
+
+      // ordinate caption
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('X', canvas.width, verticalCenter - 12);
+
+      // abscissa
+      ctx.moveTo(horizontalCenter, 0);
+      ctx.lineTo(horizontalCenter, canvas.height);
+      ctx.stroke();
+
+      // abscissa arrow
+      ctx.beginPath();
+      ctx.moveTo(horizontalCenter, 0);
+      ctx.lineTo(horizontalCenter - arrowSize - 0.5, arrowSize + 0.5);
+      ctx.lineTo(horizontalCenter + arrowSize + 0.5, arrowSize + 0.5);
+      ctx.fill();
+
+      // ordinate caption
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Y', horizontalCenter + 12, 0);
+    }
+  </script>
 </html>
