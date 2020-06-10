@@ -11,6 +11,7 @@
         width: 100vw;
         height: 100vh;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
         background: url('https://content.pouet.net/styles/001/gfx/trumpet.png');
@@ -23,31 +24,82 @@
         background: white;
         color: black;
       }
+
+      #form {
+        margin-top: 20px;
+        display: flex;
+      }
+
+      #button {
+        margin-top: 20px;
+        font-size: 20px;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        outline: none;
+        margin-left: 20px;
+      }
     </style>
   </head>
   <body>
     <canvas id="graph" width="800" height="600"></canvas>
+    <button id="button" type="button">Draw graph</button>
   </body>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script type="text/babel">
     const canvas = document.querySelector('#graph');
     const ctx = canvas.getContext('2d');
 
+    const scale = 5;
+
+    const edgeOffset = 30;
+
     const horizontalCenter = canvas.width / 2 - 0.5;
     const verticalCenter = canvas.height / 2 - 0.5;
+    const rangeFrom = -scale;
+    const rangeTo = scale;
+    const horizontalStep = (canvas.width - edgeOffset * 2) / (rangeTo - rangeFrom);
+    const verticalStep = (canvas.height - edgeOffset * 2) / (rangeTo - rangeFrom);
 
     ctx.font = '14px Arial';
 
-    drawAxis(-5, 5);
+    drawAxis(scale);
+
+    document.querySelector('#button').addEventListener('click', drawGraph);
+
+    /**
+     * Draws y = x function graph
+     */
+    function drawGraph(e) {
+      e.preventDefault();
+
+      ctx.moveTo(-scale, -scale);
+
+      for (let x = -scale; x <= scale; x++) {
+        const y = x;
+
+        drawPoint(x, y);
+      }
+    }
+
+    /**
+     * Draws a point
+     * @param {number} x
+     * @param {number} y
+     */
+    function drawPoint(x, y) {
+      const canvasX = horizontalCenter + x * horizontalStep;
+      const canvasY = verticalCenter - y * verticalStep;
+
+      ctx.fillRect(canvasX, canvasY, 1, 1);
+    }
 
     /**
      * Draws coordinate system axis
-     * @param {number} rangeFrom - minimum scale range
-     * @param {number} rangeTo - maximum scale range
+     * @param {number} scale - axis range (-scale; scale)
      */
-    function drawAxis(rangeFrom, rangeTo) {
+    function drawAxis(scale) {
       const arrowSize = 5;
-      const edgeOffset = 30;
       ctx.lineWidth = 1;
 
       // ordinate
@@ -68,7 +120,7 @@
       ctx.fillText('X', canvas.width, verticalCenter - 12);
 
       // ordinate ticks
-      const horizontalStep = (canvas.width - edgeOffset * 2) / (rangeTo - rangeFrom);
+
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       for (let i = edgeOffset, k = rangeFrom; i <= canvas.width - edgeOffset; i += horizontalStep, k++) {
@@ -96,10 +148,9 @@
       ctx.fillText('Y', horizontalCenter + 12, 0);
 
       // abscissa ticks
-      const verticalStep = (canvas.height - edgeOffset * 2) / (rangeTo - rangeFrom);
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
-      for (let i = edgeOffset, k = rangeFrom; i <= canvas.height - edgeOffset; i += verticalStep, k++) {
+      for (let i = canvas.height - edgeOffset, k = rangeFrom; i >= edgeOffset; i -= verticalStep, k++) {
         ctx.moveTo(horizontalCenter - 10, i - 0.5);
         ctx.lineTo(horizontalCenter + 10, i - 0.5);
         ctx.stroke();
