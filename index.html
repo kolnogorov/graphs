@@ -54,8 +54,8 @@
 
     const edgeOffset = 30;
 
-    const horizontalCenter = canvas.width / 2 - 0.5;
-    const verticalCenter = canvas.height / 2 - 0.5;
+    const horizontalCenter = canvas.width * 0.5 + 0.5;
+    const verticalCenter = canvas.height * 0.5 + 0.5;
     const rangeFrom = -scale;
     const rangeTo = scale;
     const horizontalStep = (canvas.width - edgeOffset * 2) / (rangeTo - rangeFrom);
@@ -73,9 +73,8 @@
     function drawGraph(e) {
       e.preventDefault();
 
-      ctx.moveTo(-scale, -scale);
-
-      for (let x = -scale; x <= scale; x++) {
+      ctx.beginPath();
+      for (let x = -canvas.width; x <= canvas.width; x++) {
         const y = x;
 
         drawPoint(x, y);
@@ -88,10 +87,10 @@
      * @param {number} y
      */
     function drawPoint(x, y) {
-      const canvasX = horizontalCenter + x * horizontalStep;
-      const canvasY = verticalCenter - y * verticalStep;
+      const cx = x;
+      const cy = -y;
 
-      ctx.fillRect(canvasX, canvasY, 1, 1);
+      ctx.fillRect(cx, cy, 1, 1);
     }
 
     /**
@@ -124,8 +123,8 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
       for (let i = edgeOffset, k = rangeFrom; i <= canvas.width - edgeOffset; i += horizontalStep, k++) {
-        ctx.moveTo(i - 0.5, verticalCenter - 10);
-        ctx.lineTo(i - 0.5, verticalCenter + 10);
+        ctx.moveTo(i + 0.5, verticalCenter - 10);
+        ctx.lineTo(i + 0.5, verticalCenter + 10);
         ctx.stroke();
         k && ctx.fillText(k, i, verticalCenter + 16);
       }
@@ -151,14 +150,15 @@
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       for (let i = canvas.height - edgeOffset, k = rangeFrom; i >= edgeOffset; i -= verticalStep, k++) {
-        ctx.moveTo(horizontalCenter - 10, i - 0.5);
-        ctx.lineTo(horizontalCenter + 10, i - 0.5);
+        ctx.moveTo(horizontalCenter - 10, i + 0.5);
+        ctx.lineTo(horizontalCenter + 10, i + 0.5);
         ctx.stroke();
         k && ctx.fillText(k, horizontalCenter - 16, i);
       }
 
       // center
       ctx.fillText(0, horizontalCenter + 16, verticalCenter - 16);
+      ctx.translate(canvas.width * 0.5, canvas.height * 0.5);
     }
   </script>
 </html>
