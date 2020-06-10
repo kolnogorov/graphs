@@ -38,11 +38,16 @@
 
     ctx.font = '14px Arial';
 
-    drawAxis();
+    drawAxis(-5, 5);
 
-    // functions
-    function drawAxis() {
+    /**
+     * Draws coordinate system axis
+     * @param {number} rangeFrom - minimum scale range
+     * @param {number} rangeTo - maximum scale range
+     */
+    function drawAxis(rangeFrom, rangeTo) {
       const arrowSize = 5;
+      const edgeOffset = 30;
       ctx.lineWidth = 1;
 
       // ordinate
@@ -62,6 +67,17 @@
       ctx.textBaseline = 'bottom';
       ctx.fillText('X', canvas.width, verticalCenter - 12);
 
+      // ordinate ticks
+      const horizontalStep = (canvas.width - edgeOffset * 2) / (rangeTo - rangeFrom);
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (let i = edgeOffset, k = rangeFrom; i <= canvas.width - edgeOffset; i += horizontalStep, k++) {
+        ctx.moveTo(i - 0.5, verticalCenter - 10);
+        ctx.lineTo(i - 0.5, verticalCenter + 10);
+        ctx.stroke();
+        k && ctx.fillText(k, i, verticalCenter + 16);
+      }
+
       // abscissa
       ctx.moveTo(horizontalCenter, 0);
       ctx.lineTo(horizontalCenter, canvas.height);
@@ -74,10 +90,24 @@
       ctx.lineTo(horizontalCenter + arrowSize + 0.5, arrowSize + 0.5);
       ctx.fill();
 
-      // ordinate caption
+      // abscissa caption
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText('Y', horizontalCenter + 12, 0);
+
+      // abscissa ticks
+      const verticalStep = (canvas.height - edgeOffset * 2) / (rangeTo - rangeFrom);
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      for (let i = edgeOffset, k = rangeFrom; i <= canvas.height - edgeOffset; i += verticalStep, k++) {
+        ctx.moveTo(horizontalCenter - 10, i - 0.5);
+        ctx.lineTo(horizontalCenter + 10, i - 0.5);
+        ctx.stroke();
+        k && ctx.fillText(k, horizontalCenter - 16, i);
+      }
+
+      // center
+      ctx.fillText(0, horizontalCenter + 16, verticalCenter - 16);
     }
   </script>
 </html>
